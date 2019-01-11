@@ -14,7 +14,7 @@ def generate():
 	image = ImageCaptcha(fonts=['/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf', '/usr/share/fonts/truetype/liberation/LiberationSans-Italic.ttf'])
 	random.seed();
 	
-	captcha_for_char = 20
+	captcha_for_char = int(raw_input("How many captcha for char do you want? "))
 
 	for a in arange(0,len(charset)):
 		for b in arange(0,captcha_for_char):
