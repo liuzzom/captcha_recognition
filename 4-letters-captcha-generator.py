@@ -1,7 +1,7 @@
 # coding=utf-8
 from numpy import arange
 from captcha.image import ImageCaptcha
-from string import ascii_lowercase,ascii_uppercase
+from string import ascii_lowercase, ascii_uppercase
 import random
 
 
