@@ -6,47 +6,48 @@ def main():
     
     inputs=Input(shape=(160,60,3))
     
+    '''
     # shared convolutional layer
-    
-    c1 = Conv2D(20, (5,5), (2,2), activation='relu', use_bias=False)(inputs)
+    c1 = Conv2D(20, (5,5), strides=(2,2), activation='relu', use_bias=False)(inputs)
     mp1 = MaxPooling2D()(c1)
-    c2 = Conv2D(32, (5,5), (2,2), activation='relu',use_bias=False)(mp1)
+    c2 = Conv2D(32, (5,5), strides=(2,2), activation='relu',use_bias=False)(mp1)
     avg2 = AveragePooling2D()(c2)
-    c3 = Conv2D(50, (5,5), (2,2), activation='relu',use_bias=False)(avg2)
+    c3 = Conv2D(50, (5,5), strides=(2,2), activation='relu',use_bias=False)(avg2)
     avg3=AveragePooling2D()(c3)
-    
+    '''
+
     # 4 separate convolutional layers
     
     # Chain A
-    a_c1 = Conv2D(20, (5,5), (2,2), activation='relu', use_bias=False)(avg3)
+    a_c1 = Conv2D(20, (5,5), strides=(2,2), activation='relu', use_bias=False)(inputs)
     a_mp1 = MaxPooling2D()(a_c1)
-    a_c2 = Conv2D(32, (5,5), (2,2), activation='relu',use_bias=False)(a_mp1)
+    a_c2 = Conv2D(32, (5,5), strides=(2,2), activation='relu',use_bias=False)(a_mp1)
     a_avg2 = AveragePooling2D()(a_c2)
-    a_c3 = Conv2D(50, (5,5), (2,2), activation='relu',use_bias=False)(a_avg2)
+    a_c3 = Conv2D(50, (5,5), strides=(2,2), activation='relu',use_bias=False)(a_avg2)
     a_avg3=AveragePooling2D()(a_c3)
     
     # Chain B
-    b_c1 = Conv2D(20, (5,5), (2,2), activation='relu', use_bias=False)(avg3)
+    b_c1 = Conv2D(20, (5,5), strides=(2,2), activation='relu', use_bias=False)(inputs)
     b_mp1 = MaxPooling2D()(b_c1)
-    b_c2 = Conv2D(32, (5,5), (2,2), activation='relu',use_bias=False)(b_mp1)
+    b_c2 = Conv2D(32, (5,5), strides=(2,2), activation='relu',use_bias=False)(b_mp1)
     b_avg2 = AveragePooling2D()(b_c2)
-    b_c3 = Conv2D(50, (5,5), (2,2), activation='relu',use_bias=False)(b_avg2)
+    b_c3 = Conv2D(50, (5,5), strides=(2,2), activation='relu',use_bias=False)(b_avg2)
     b_avg3=AveragePooling2D()(b_c3)
     
     # Chain C
-    c_c1 = Conv2D(20, (5,5), (2,2), activation='relu', use_bias=False)(avg3)
+    c_c1 = Conv2D(20, (5,5), strides=(2,2), activation='relu', use_bias=False)(inputs)
     c_mp1 = MaxPooling2D()(c_c1)
-    c_c2 = Conv2D(32, (5,5), (2,2), activation='relu',use_bias=False)(c_mp1)
+    c_c2 = Conv2D(32, (5,5), strides=(2,2), activation='relu',use_bias=False)(c_mp1)
     c_avg2 = AveragePooling2D()(c_c2)
-    c_c3 = Conv2D(50, (5,5), (2,2), activation='relu',use_bias=False)(c_avg2)
+    c_c3 = Conv2D(50, (5,5), strides=(2,2), activation='relu',use_bias=False)(c_avg2)
     c_avg3=AveragePooling2D()(c_c3)
     
     # Chain D
-    d_c1 = Conv2D(20, (5,5), (2,2), activation='relu', use_bias=False)(avg3)
+    d_c1 = Conv2D(20, (5,5), strides=(2,2), activation='relu', use_bias=False)(inputs)
     d_mp1 = MaxPooling2D()(d_c1)
-    d_c2 = Conv2D(32, (5,5), (2,2), activation='relu',use_bias=False)(d_mp1)
+    d_c2 = Conv2D(32, (5,5), strides=(2,2), activation='relu',use_bias=False)(d_mp1)
     d_avg2 = AveragePooling2D()(d_c2)
-    d_c3 = Conv2D(50, (5,5), (2,2), activation='relu',use_bias=False)(d_avg2)
+    d_c3 = Conv2D(50, (5,5), strides=(2,2), activation='relu',use_bias=False)(d_avg2)
     d_avg3=AveragePooling2D()(d_c3)
     
     # Concat & flatten layers
