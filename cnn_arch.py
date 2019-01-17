@@ -1,5 +1,6 @@
 from keras.models import Model,Sequential
-from keras.layers import Conv2D, MaxPooling2D,AveragePooling2D,Input,concatenate
+from keras.layers import Conv2D, MaxPooling2D,AveragePooling2D,Input,concatenate,Flatten
+from keras.layers.core import Dense
 
 def main():
     
@@ -53,11 +54,46 @@ def main():
     #Chain A
     a_x=concatenate([a_avg3,b_avg3])
     
+    #Chain B
     b_x=concatenate([a_avg3,b_avg3,c_avg3])
     
+    #Chain C
     c_x=concatenate([b_avg3,c_avg3,d_avg3])
     
+    #Chain D
     d_x=concatenate([c_avg3,d_avg3])
+    
+    a_fl = Flatten()(a_x)
+    b_fl = Flatten()(b_x)
+    c_fl = Flatten()(c_x)
+    d_fl = Flatten()(d_x)
+    
+    
+    # Fully connnected layers
+    
+    
+    #Chain A
+    a_fc1 = Dense(512, activation='relu', use_bias=None)(a_fl)
+    a_fc2 = Dense(512,activation='softmax', use_bias=None)(a_fc1)
+    
+    #Chain B
+    b_fc1 = Dense(512, activation='relu', use_bias=None)(b_fl)
+    b_fc2 = Dense(512, activation='softmax', use_bias=None)(b_fc1)
+    
+    #Chain C
+    c_fc1 = Dense(512, activation='relu', use_bias=None)(c_fl)
+    c_fc2 = Dense(512, activation='softmax', use_bias=None)(c_fc1)
+    
+    #Chain D
+    d_fc1 = Dense(512, activation='relu', use_bias=None)(d_fl)
+    d_fc2 = Dense(512, activation='softmax', use_bias=None)(d_fc1)
+    
+    
+    
+    
+    
+    
+    
     
     
     
