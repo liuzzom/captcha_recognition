@@ -4,6 +4,7 @@ from captcha.image import ImageCaptcha
 from string import ascii_lowercase,ascii_uppercase
 import random
 
+
 def generate():
 	lower = [letter for letter in ascii_lowercase] # all lowercase characters
 	upper = [letter for letter in ascii_uppercase] # all uppercase characters
@@ -26,6 +27,7 @@ def generate():
 def main():
 	generate()
 	return
+
 
 if __name__ == '__main__':
 	main()
