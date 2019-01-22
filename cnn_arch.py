@@ -89,46 +89,7 @@ def main():
     d_fc1 = layers.Dense(512, activation='relu', use_bias=None)(d_fl)
     d_fc2 = layers.Dense(512, activation='softmax', use_bias=None)(d_fc1)
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    '''
-    model=Sequential()
-    
-    #1st convolutional shared layer
-    #model.add(Conv2D(20, (5,5), (2,2), activation='relu', use_bias=False,input_shape=(160,60,3)))
-    
-    
-    #max pooling of 1st conv layer 
-    model.add(MaxPooling2D())
-    
-    #2nd convolutinal shared layer
-    model.add(Conv2D(32, (5,5), (2,2), activation='relu',use_bias=False))
-    
-    #avg pooling of 2nd conv layer
-    model.add(AveragePooling2D())
-              
-    #3rd convolutinal shared layer
-    model.add(Conv2D(50, (5,5), (2,2), activation='relu',use_bias=False))
-    
-    #avg pooling of 3rd conv layer
-    model.add(AveragePooling2D())
-    
-    model.compile(optimizer, loss, metrics, loss_weights, sample_weight_mode, weighted_metrics, target_tensors)
-    '''
-    
-    
-    
-    
+      
     
     
 if __name__ == "__main__":
