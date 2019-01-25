@@ -1,12 +1,13 @@
 import tensorflow as tf
-from tensorflow.keras import layers, Model
+from tensorflow.keras import layers, Model, optimizers
 import cv2 as cv
+
 
 def main():
     
     
     
-    inputs=layers.Input(shape=(160, 60, 3))
+    inputs=layers.Input(shape=(60, 160, 1))
     
     '''
     # shared convolutional layer
@@ -18,6 +19,7 @@ def main():
     avg3=layers.AveragePooling2D()(c3)
     '''
     
+    print "creating layers..."
 
     # 4 separate convolutional layers
     
@@ -92,11 +94,22 @@ def main():
     d_fc1 = layers.Dense(512, activation='relu', use_bias=None)(d_fl)
     d_fc2 = layers.Dense(62, activation='softmax', use_bias=None)(d_fc1)
     
-    
+    print "layers created\ncreating model..."
     model = Model(inputs=inputs, outputs=[ a_fc2, b_fc2, c_fc2, d_fc2 ] )
+    print "model created"
     
-      
-    print "architecture created"
+    print "compiling..."
+    sgd = optimizers.SGD()
+    model.compile(sgd, loss='mean_squared_error', metrics=['accuracy'])
+    print "compiled"
+    
+    '''
+    TODO:
+    - Caricare le immagini come array Numpy
+    - Creare le label come array Numpy
+    - Training/Validation con metodo fit
+    - Test tramite metodo evaluate
+    '''
     
 if __name__ == "__main__":
     main()
