@@ -1,7 +1,10 @@
 import tensorflow as tf
-from tensorflow.keras import layers
+from tensorflow.keras import layers, Model
+import cv2 as cv
 
 def main():
+    
+    
     
     inputs=layers.Input(shape=(160, 60, 3))
     
@@ -88,6 +91,9 @@ def main():
     #Chain D
     d_fc1 = layers.Dense(512, activation='relu', use_bias=None)(d_fl)
     d_fc2 = layers.Dense(512, activation='softmax', use_bias=None)(d_fc1)
+    
+    
+    model = Model(inputs=inputs, outputs=[ a_fc2, b_fc2, c_fc2, d_fc2 ] )
     
       
     
