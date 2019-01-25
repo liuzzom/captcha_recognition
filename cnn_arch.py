@@ -75,22 +75,22 @@ def main():
     
     #Chain A
     a_fc1 = layers.Dense(512, activation='relu', use_bias=None)(a_fl)
-    a_fc2 = layers.Dense(512,activation='softmax', use_bias=None)(a_fc1)
+    a_fc2 = layers.Dense(62,activation='softmax', use_bias=None)(a_fc1)
     
     #Chain B
     b_fc1 = layers.Dense(512, activation='relu', use_bias=None)(b_fl)
-    b_fc2 = layers.Dense(512, activation='softmax', use_bias=None)(b_fc1)
+    b_fc2 = layers.Dense(62, activation='softmax', use_bias=None)(b_fc1)
     
     #Chain C
     c_fc1 = layers.Dense(512, activation='relu', use_bias=None)(c_fl)
-    c_fc2 = layers.Dense(512, activation='softmax', use_bias=None)(c_fc1)
+    c_fc2 = layers.Dense(62, activation='softmax', use_bias=None)(c_fc1)
     
     #Chain D
     d_fc1 = layers.Dense(512, activation='relu', use_bias=None)(d_fl)
-    d_fc2 = layers.Dense(512, activation='softmax', use_bias=None)(d_fc1)
+    d_fc2 = layers.Dense(62, activation='softmax', use_bias=None)(d_fc1)
     
       
-    
+    print "architecture created"
     
 if __name__ == "__main__":
     main()
