@@ -2,6 +2,7 @@ from numpy import arange
 from captcha.image import ImageCaptcha
 from string import ascii_lowercase,ascii_uppercase
 import random as rand
+import sys
 
 
 def generate_dataset(samples):
@@ -18,8 +19,14 @@ def generate_dataset(samples):
         image.write(string,string+'.png')
 
 def main():
-    generate_dataset(10)
-    
+	
+	if len(sys.argv) == 2:
+		samples = int(sys.argv[1])
+		print("generating " + sys.argv[1] + " images...")
+		generate_dataset(samples)
+		print("done")
+	else:
+		print("Correct use: python3 random_captcha_generator.py [num]")
    
 if __name__ == "__main__":
     main()
