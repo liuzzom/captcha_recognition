@@ -42,12 +42,13 @@ def getLabels(dirPath):
 def getImages(dirPath):
     # get all image names
     imgNames = [name for name in os.listdir(dirPath) if name.endswith(".png")]
-    
+
     images = []
     
     for imgName in imgNames:
         path = dirPath + imgNames[0]
         img = cv.imread(path, 0)
+        img = img.reshape([60, 160, 1])
         images.append(img)
     
     images = array(images)
