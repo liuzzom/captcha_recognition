@@ -1,11 +1,60 @@
 import tensorflow as tf
-from tensorflow.keras import layers, Model, optimizers
+from tensorflow.keras import layers, Model, optimizers  
 import cv2 as cv
+import os
+from numpy import array
 
+def charToInt(char):
+    str = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+    return str.find(char)
 
+def getLabels(dirPath):
+    # get all image names
+    imgNames = [name for name in os.listdir(dirPath) if name.endswith(".png")]
+    
+    # lists containing letters
+    firstLetters = [name[0] for name in imgNames]
+    secondLetters = [name[1] for name in imgNames]
+    thirdLetters = [name[2] for name in imgNames]
+    fourthLetters = [name[3] for name in imgNames]
+
+    # conversion into lists containing numbers
+    firstLetters = [charToInt(char) for char in firstLetters]
+    secondLetters = [charToInt(char) for char in secondLetters]
+    thirdLetters = [charToInt(char) for char in thirdLetters]
+    fourthLetters = [charToInt(char) for char in fourthLetters]
+
+    # conversion in numpy arrays
+    firstLetters = array(firstLetters)
+    secondLetters = array(secondLetters)
+    thirdLetters = array(thirdLetters)
+    fourthLetters = array(fourthLetters)
+    
+    # conversion in categorical numpy arrays
+    firstLetters = tf.keras.utils.to_categorical(firstLetters, num_classes=62)
+    secondLetters = tf.keras.utils.to_categorical(secondLetters, num_classes=62)
+    thirdLetters = tf.keras.utils.to_categorical(thirdLetters, num_classes=62)
+    fourthLetters = tf.keras.utils.to_categorical(fourthLetters, num_classes=62)
+    
+    
+    return (firstLetters, secondLetters, thirdLetters, fourthLetters)
+
+def getImages(dirPath):
+    # get all image names
+    imgNames = [name for name in os.listdir(dirPath) if name.endswith(".png")]
+
+    images = []
+    
+    for imgName in imgNames:
+        path = dirPath + imgNames[0]
+        img = cv.imread(path, 0)
+        img = img.reshape([60, 160, 1])
+        images.append(img)
+    
+    images = array(images)
+    return images
+    
 def main():
-    
-    
     
     inputs=layers.Input(shape=(60, 160, 1))
     
@@ -19,7 +68,7 @@ def main():
     avg3=layers.AveragePooling2D()(c3)
     '''
     
-    print "creating layers..."
+    #print "creating layers..."
 
     # 4 separate convolutional layers
     
@@ -94,30 +143,44 @@ def main():
     d_fc1 = layers.Dense(512, activation='relu', use_bias=None)(d_fl)
     d_fc2 = layers.Dense(62, activation='softmax', use_bias=None)(d_fc1)
     
-    print "layers created\ncreating model..."
+    #print "layers created\ncreating model..."
     model = Model(inputs=inputs, outputs=[ a_fc2, b_fc2, c_fc2, d_fc2 ] )
-    print "model created"
+    #print "model created"
     
-    print "compiling..."
+    #print "compiling..."
     sgd = optimizers.SGD()
     model.compile(sgd, loss='mean_squared_error', metrics=['accuracy'])
-    print "compiled"
+    #print "compiled"
+
+    # images and labels for training and validation
+    #print "loading images and labels for training..."
+    trainLabels = []
+    trainFirstLetters, trainSecondLetters, trainThirdLetters, trainFourthLetters =  getLabels("./train/")
+    trainLabels.append(trainFirstLetters)
+    trainLabels.append(trainSecondLetters)
+    trainLabels.append(trainThirdLetters)
+    trainLabels.append(trainFourthLetters)
+    trainImages = getImages("./train/")
+    #print "done"
     
-    '''
-    TODO:
-    - Caricare le immagini come array Numpy
-    - Creare le label come array Numpy
-    - Training/Validation con metodo fit
-    - Test tramite metodo evaluate
-    '''
+    # training and validation
+    #print "training..."
+    model.fit(x=trainImages, y=trainLabels, batch_size=1000, epochs=2, validation_split=0.1)
+    #print "done"
+    
+    # images and labels for testing
+    testLabels = []
+    testFirstLetters, testSecondLetters, testThirdLetters, testFourthLetters =  getLabels("./test/")
+    testLabels.append(testFirstLetters)
+    testLabels.append(testSecondLetters)
+    testLabels.append(testThirdLetters)
+    testLabels.append(testFourthLetters)
+    testImages = getImages("./test/")
+    
+    # test
+    score=model.evaluate(x=testImages, y=testLabels, batch_size=1000)
+    
+    print(score)
     
 if __name__ == "__main__":
     main()
-    
-    
-    
-    
-    
-    
-    
-    
