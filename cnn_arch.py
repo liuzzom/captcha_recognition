@@ -5,8 +5,9 @@ import os
 from numpy import array
 
 def charToInt(char):
-    str = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-    return str.find(char)
+    # TO DO: change bad name
+    charset = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+    return charset.find(char)
 
 def getLabels(dirPath):
     # get all image names
@@ -37,22 +38,25 @@ def getLabels(dirPath):
     fourthLetters = tf.keras.utils.to_categorical(fourthLetters, num_classes=62)
     
     
-    return (firstLetters, secondLetters, thirdLetters, fourthLetters)
+    return [firstLetters, secondLetters, thirdLetters, fourthLetters]
 
 def getImages(dirPath):
+    # TO DO: rename to be more evocative
+    
     # get all image names
     imgNames = [name for name in os.listdir(dirPath) if name.endswith(".png")]
-
-    images = []
-    
-    for imgName in imgNames:
-        path = dirPath + imgNames[0]
-        img = cv.imread(path, 0)
-        img = img.reshape([60, 160, 1])
-        images.append(img)
-    
+    images = [image_to_scalegray(dirPath, imgName) for imgName in imgNames]
     images = array(images)
     return images
+
+def image_to_scalegray(path_dir,img_name):
+    
+    # transform a rgb image to its scalegray representation
+    
+    path = path_dir + img_name
+    img = cv.imread(path, 0)
+    img = img.reshape([60, 160, 1])
+    return img
     
 def main():
     
@@ -85,7 +89,8 @@ def main():
     b_mp1 = layers.MaxPooling2D(strides=(2,2))(b_c1)
     b_c2 = layers.Conv2D(32, (5,5), strides=(2,2), padding='same',activation='relu',use_bias=False)(b_mp1)
     b_avg2 = layers.AveragePooling2D(strides=(2,2))(b_c2)
-    b_c3 = layers.Conv2D(50, (5,5), strides=(2,2),padding='same', activation='relu',use_bias=False)(b_avg2)
+    b_c3 = layers.Conv2D(50, (5,5), strides=(2,
+                                             2),padding='same', activation='relu',use_bias=False)(b_avg2)
     b_avg3=layers.AveragePooling2D(strides=(2,2))(b_c3)
     
     # Chain C
@@ -117,7 +122,7 @@ def main():
     
     #Chain D
     d_x=layers.concatenate([c_avg3,d_avg3])
-    
+
     a_fl = layers.Flatten()(a_x)
     b_fl = layers.Flatten()(b_x)
     c_fl = layers.Flatten()(c_x)
@@ -154,12 +159,7 @@ def main():
 
     # images and labels for training and validation
     #print "loading images and labels for training..."
-    trainLabels = []
-    trainFirstLetters, trainSecondLetters, trainThirdLetters, trainFourthLetters =  getLabels("./train/")
-    trainLabels.append(trainFirstLetters)
-    trainLabels.append(trainSecondLetters)
-    trainLabels.append(trainThirdLetters)
-    trainLabels.append(trainFourthLetters)
+    trainLabels =  getLabels("./train/")
     trainImages = getImages("./train/")
     #print "done"
     
@@ -169,12 +169,7 @@ def main():
     #print "done"
     
     # images and labels for testing
-    testLabels = []
-    testFirstLetters, testSecondLetters, testThirdLetters, testFourthLetters =  getLabels("./test/")
-    testLabels.append(testFirstLetters)
-    testLabels.append(testSecondLetters)
-    testLabels.append(testThirdLetters)
-    testLabels.append(testFourthLetters)
+    testLabels = getLabels("./test/")
     testImages = getImages("./test/")
     
     # test
