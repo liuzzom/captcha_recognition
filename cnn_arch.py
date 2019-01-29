@@ -1,6 +1,8 @@
 import tensorflow as tf
-from tensorflow.keras import layers, Model, optimizers  
+from tensorflow.keras import layers, Model, optimizers
+
 import cv2 as cv
+from sklearn.preprocessing import MultiLabelBinarizer
 import os
 from numpy import array
 
@@ -10,6 +12,8 @@ def charToInt(char):
     return charset.find(char)
 
 def getLabels(dirPath):
+    
+        
     # get all image names
     imgNames = [name for name in os.listdir(dirPath) if name.endswith(".png")]
     
@@ -19,23 +23,17 @@ def getLabels(dirPath):
     thirdLetters = [name[2] for name in imgNames]
     fourthLetters = [name[3] for name in imgNames]
 
-    # conversion into lists containing numbers
-    firstLetters = [charToInt(char) for char in firstLetters]
-    secondLetters = [charToInt(char) for char in secondLetters]
-    thirdLetters = [charToInt(char) for char in thirdLetters]
-    fourthLetters = [charToInt(char) for char in fourthLetters]
-
-    # conversion in numpy arrays
-    firstLetters = array(firstLetters)
-    secondLetters = array(secondLetters)
-    thirdLetters = array(thirdLetters)
-    fourthLetters = array(fourthLetters)
     
-    # conversion in categorical numpy arrays
-    firstLetters = tf.keras.utils.to_categorical(firstLetters, num_classes=62)
-    secondLetters = tf.keras.utils.to_categorical(secondLetters, num_classes=62)
-    thirdLetters = tf.keras.utils.to_categorical(thirdLetters, num_classes=62)
-    fourthLetters = tf.keras.utils.to_categorical(fourthLetters, num_classes=62)
+    # labelling
+    charset = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+    classes = array([char for char in charset])
+    
+    mlb = MultiLabelBinarizer(classes=classes)
+    
+    firstLetters = mlb.fit_transform(y=firstLetters)
+    secondLetters = mlb.fit_transform(y=secondLetters)
+    thirdLetters = mlb.fit_transform(y=thirdLetters)
+    fourthLetters = mlb.fit_transform(y=fourthLetters)
     
     
     return [firstLetters, secondLetters, thirdLetters, fourthLetters]
@@ -52,7 +50,6 @@ def getImages(dirPath):
 def image_to_scalegray(path_dir,img_name):
     
     # transform a rgb image to its scalegray representation
-    
     path = path_dir + img_name
     img = cv.imread(path, 0)
     img = img.reshape([60, 160, 1])
