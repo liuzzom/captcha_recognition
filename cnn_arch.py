@@ -5,6 +5,7 @@ import cv2 as cv
 from sklearn.preprocessing import MultiLabelBinarizer
 import os
 from numpy import array
+from cv2.cv2 import THRESH_BINARY
 
 def charToInt(char):
     # TO DO: change bad name
@@ -43,8 +44,7 @@ def getImages(dirPath):
     
     # get all image names
     imgNames = [name for name in os.listdir(dirPath) if name.endswith(".png")]
-    images = [image_to_scalegray(dirPath, imgName) for imgName in imgNames]
-    images = array(images)
+    images = array([image_to_scalegray(dirPath, imgName) for imgName in imgNames])
     return images
 
 def image_to_scalegray(path_dir,img_name):
@@ -52,6 +52,7 @@ def image_to_scalegray(path_dir,img_name):
     # transform a rgb image to its scalegray representation
     path = path_dir + img_name
     img = cv.imread(path, 0)
+    cv.threshold(img,127,255,cv.THRESH_BINARY)
     img = img.reshape([60, 160, 1])
     return img
     
@@ -74,36 +75,36 @@ def main():
     # 4 separate convolutional layers
     
     # Chain A
-    a_c1 = layers.Conv2D(20, (5,5), strides=(2,2),padding='same', activation='relu', use_bias=False)(inputs)
+    a_c1 = layers.Conv2D(20, (5,5), strides=(2,2),padding='same', activation='relu', use_bias=True)(inputs)
     a_mp1 = layers.MaxPooling2D()(a_c1)
-    a_c2 = layers.Conv2D(32, (5,5), strides=(2,2),padding='same', activation='relu',use_bias=False)(a_mp1)
+    a_c2 = layers.Conv2D(32, (5,5), strides=(2,2),padding='same', activation='relu',use_bias=True)(a_mp1)
     a_avg2 = layers.AveragePooling2D()(a_c2)
-    a_c3 = layers.Conv2D(50, (5,5), strides=(2,2),padding='same',  activation='relu',use_bias=False)(a_avg2)
+    a_c3 = layers.Conv2D(50, (5,5), strides=(2,2),padding='same',  activation='relu',use_bias=True)(a_avg2)
     a_avg3=layers.AveragePooling2D()(a_c3)
     
     # Chain B
-    b_c1 = layers.Conv2D(20, (5,5), strides=(2,2), padding='same',activation='relu', use_bias=False)(inputs)
+    b_c1 = layers.Conv2D(20, (5,5), strides=(2,2), padding='same',activation='relu', use_bias=True)(inputs)
     b_mp1 = layers.MaxPooling2D(strides=(2,2))(b_c1)
-    b_c2 = layers.Conv2D(32, (5,5), strides=(2,2), padding='same',activation='relu',use_bias=False)(b_mp1)
+    b_c2 = layers.Conv2D(32, (5,5), strides=(2,2), padding='same',activation='relu',use_bias=True)(b_mp1)
     b_avg2 = layers.AveragePooling2D(strides=(2,2))(b_c2)
     b_c3 = layers.Conv2D(50, (5,5), strides=(2,
-                                             2),padding='same', activation='relu',use_bias=False)(b_avg2)
+                                             2),padding='same', activation='relu',use_bias=True)(b_avg2)
     b_avg3=layers.AveragePooling2D(strides=(2,2))(b_c3)
     
     # Chain C
-    c_c1 = layers.Conv2D(20, (5,5), strides=(2,2),padding='same',activation='relu', use_bias=False)(inputs)
+    c_c1 = layers.Conv2D(20, (5,5), strides=(2,2),padding='same',activation='relu', use_bias=True)(inputs)
     c_mp1 = layers.MaxPooling2D(strides=(2,2))(c_c1)
-    c_c2 = layers.Conv2D(32, (5,5), strides=(2,2),padding='same', activation='relu',use_bias=False)(c_mp1)
+    c_c2 = layers.Conv2D(32, (5,5), strides=(2,2),padding='same', activation='relu',use_bias=True)(c_mp1)
     c_avg2 = layers.AveragePooling2D(strides=(2,2))(c_c2)
-    c_c3 = layers.Conv2D(50, (5,5), strides=(2,2),padding='same', activation='relu',use_bias=False)(c_avg2)
+    c_c3 = layers.Conv2D(50, (5,5), strides=(2,2),padding='same', activation='relu',use_bias=True)(c_avg2)
     c_avg3=layers.AveragePooling2D(strides=(2,2))(c_c3)
     
     # Chain D
-    d_c1 = layers.Conv2D(20, (5,5), strides=(2,2),padding='same', activation='relu', use_bias=False)(inputs)
+    d_c1 = layers.Conv2D(20, (5,5), strides=(2,2),padding='same', activation='relu', use_bias=True)(inputs)
     d_mp1 = layers.MaxPooling2D(strides=(2,2))(d_c1)
-    d_c2 = layers.Conv2D(32, (5,5), strides=(2,2),padding='same', activation='relu',use_bias=False)(d_mp1)
+    d_c2 = layers.Conv2D(32, (5,5), strides=(2,2),padding='same', activation='relu',use_bias=True)(d_mp1)
     d_avg2 = layers.AveragePooling2D(strides=(2,2))(d_c2)
-    d_c3 = layers.Conv2D(50, (5,5), strides=(2,2),padding='same', activation='relu',use_bias=False)(d_avg2)
+    d_c3 = layers.Conv2D(50, (5,5), strides=(2,2),padding='same', activation='relu',use_bias=True)(d_avg2)
     d_avg3=layers.AveragePooling2D(strides=(2,2))(d_c3)
     
     # Concat & flatten layers
@@ -130,20 +131,20 @@ def main():
     
     
     #Chain A
-    a_fc1 = layers.Dense(512, activation='relu', use_bias=None)(a_fl)
-    a_fc2 = layers.Dense(62,activation='softmax', use_bias=None)(a_fc1)
+    a_fc1 = layers.Dense(512, activation='relu', use_bias=True)(a_fl)
+    a_fc2 = layers.Dense(62,activation='softmax', use_bias=True)(a_fc1)
     
     #Chain B
-    b_fc1 = layers.Dense(512, activation='relu', use_bias=None)(b_fl)
-    b_fc2 = layers.Dense(62, activation='softmax', use_bias=None)(b_fc1)
+    b_fc1 = layers.Dense(512, activation='relu', use_bias=True)(b_fl)
+    b_fc2 = layers.Dense(62, activation='softmax', use_bias=True)(b_fc1)
     
     #Chain C
-    c_fc1 = layers.Dense(512, activation='relu', use_bias=None)(c_fl)
-    c_fc2 = layers.Dense(62, activation='softmax', use_bias=None)(c_fc1)
+    c_fc1 = layers.Dense(512, activation='relu', use_bias=True)(c_fl)
+    c_fc2 = layers.Dense(62, activation='softmax', use_bias=True)(c_fc1)
     
     #Chain D
-    d_fc1 = layers.Dense(512, activation='relu', use_bias=None)(d_fl)
-    d_fc2 = layers.Dense(62, activation='softmax', use_bias=None)(d_fc1)
+    d_fc1 = layers.Dense(512, activation='relu', use_bias=True)(d_fl)
+    d_fc2 = layers.Dense(62, activation='softmax', use_bias=True)(d_fc1)
     
     #print "layers created\ncreating model..."
     model = Model(inputs=inputs, outputs=[ a_fc2, b_fc2, c_fc2, d_fc2 ] )
