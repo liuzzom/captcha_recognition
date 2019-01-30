@@ -1,13 +1,13 @@
 import tensorflow as tf
-from tensorflow.keras import layers, Model, optimizers  
+from tensorflow.keras import layers, Model, optimizers,utils
 import cv2 as cv
 import os
-from numpy import array
+from numpy import array,uint8
 
 def charToInt(char):
     # TO DO: change bad name
     charset = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-    return charset.find(char)
+    return uint8(charset.find(char))
 
 def getLabels(dirPath):
     # get all image names
@@ -18,6 +18,7 @@ def getLabels(dirPath):
     secondLetters = [name[1] for name in imgNames]
     thirdLetters = [name[2] for name in imgNames]
     fourthLetters = [name[3] for name in imgNames]
+    
 
     # conversion into lists containing numbers
     firstLetters = [charToInt(char) for char in firstLetters]
@@ -32,11 +33,11 @@ def getLabels(dirPath):
     fourthLetters = array(fourthLetters)
     
     # conversion in categorical numpy arrays
-    firstLetters = tf.keras.utils.to_categorical(firstLetters, num_classes=62)
-    secondLetters = tf.keras.utils.to_categorical(secondLetters, num_classes=62)
-    thirdLetters = tf.keras.utils.to_categorical(thirdLetters, num_classes=62)
-    fourthLetters = tf.keras.utils.to_categorical(fourthLetters, num_classes=62)
     
+    firstLetters = utils.to_categorical(firstLetters, num_classes=62)
+    secondLetters = utils.to_categorical(secondLetters, num_classes=62)
+    thirdLetters = utils.to_categorical(thirdLetters, num_classes=62)
+    fourthLetters = utils.to_categorical(fourthLetters, num_classes=62)
     
     return [firstLetters, secondLetters, thirdLetters, fourthLetters]
 
@@ -77,36 +78,36 @@ def main():
     # 4 separate convolutional layers
     
     # Chain A
-    a_c1 = layers.Conv2D(20, (5,5), strides=(2,2),padding='same', activation='relu', use_bias=False)(inputs)
+    a_c1 = layers.Conv2D(20, (5,5), strides=(2,2),padding='same', activation='relu', use_bias=True)(inputs)
     a_mp1 = layers.MaxPooling2D()(a_c1)
-    a_c2 = layers.Conv2D(32, (5,5), strides=(2,2),padding='same', activation='relu',use_bias=False)(a_mp1)
+    a_c2 = layers.Conv2D(32, (5,5), strides=(2,2),padding='same', activation='relu',use_bias=True)(a_mp1)
     a_avg2 = layers.AveragePooling2D()(a_c2)
-    a_c3 = layers.Conv2D(50, (5,5), strides=(2,2),padding='same',  activation='relu',use_bias=False)(a_avg2)
+    a_c3 = layers.Conv2D(50, (5,5), strides=(2,2),padding='same',  activation='relu',use_bias=True)(a_avg2)
     a_avg3=layers.AveragePooling2D()(a_c3)
     
     # Chain B
-    b_c1 = layers.Conv2D(20, (5,5), strides=(2,2), padding='same',activation='relu', use_bias=False)(inputs)
+    b_c1 = layers.Conv2D(20, (5,5), strides=(2,2), padding='same',activation='relu', use_bias=True)(inputs)
     b_mp1 = layers.MaxPooling2D(strides=(2,2))(b_c1)
-    b_c2 = layers.Conv2D(32, (5,5), strides=(2,2), padding='same',activation='relu',use_bias=False)(b_mp1)
+    b_c2 = layers.Conv2D(32, (5,5), strides=(2,2), padding='same',activation='relu',use_bias=True)(b_mp1)
     b_avg2 = layers.AveragePooling2D(strides=(2,2))(b_c2)
     b_c3 = layers.Conv2D(50, (5,5), strides=(2,
-                                             2),padding='same', activation='relu',use_bias=False)(b_avg2)
+                                             2),padding='same', activation='relu',use_bias=True)(b_avg2)
     b_avg3=layers.AveragePooling2D(strides=(2,2))(b_c3)
     
     # Chain C
-    c_c1 = layers.Conv2D(20, (5,5), strides=(2,2),padding='same',activation='relu', use_bias=False)(inputs)
+    c_c1 = layers.Conv2D(20, (5,5), strides=(2,2),padding='same',activation='relu', use_bias=True)(inputs)
     c_mp1 = layers.MaxPooling2D(strides=(2,2))(c_c1)
-    c_c2 = layers.Conv2D(32, (5,5), strides=(2,2),padding='same', activation='relu',use_bias=False)(c_mp1)
+    c_c2 = layers.Conv2D(32, (5,5), strides=(2,2),padding='same', activation='relu',use_bias=True)(c_mp1)
     c_avg2 = layers.AveragePooling2D(strides=(2,2))(c_c2)
-    c_c3 = layers.Conv2D(50, (5,5), strides=(2,2),padding='same', activation='relu',use_bias=False)(c_avg2)
+    c_c3 = layers.Conv2D(50, (5,5), strides=(2,2),padding='same', activation='relu',use_bias=True)(c_avg2)
     c_avg3=layers.AveragePooling2D(strides=(2,2))(c_c3)
     
     # Chain D
-    d_c1 = layers.Conv2D(20, (5,5), strides=(2,2),padding='same', activation='relu', use_bias=False)(inputs)
+    d_c1 = layers.Conv2D(20, (5,5), strides=(2,2),padding='same', activation='relu', use_bias=True)(inputs)
     d_mp1 = layers.MaxPooling2D(strides=(2,2))(d_c1)
-    d_c2 = layers.Conv2D(32, (5,5), strides=(2,2),padding='same', activation='relu',use_bias=False)(d_mp1)
+    d_c2 = layers.Conv2D(32, (5,5), strides=(2,2),padding='same', activation='relu',use_bias=True)(d_mp1)
     d_avg2 = layers.AveragePooling2D(strides=(2,2))(d_c2)
-    d_c3 = layers.Conv2D(50, (5,5), strides=(2,2),padding='same', activation='relu',use_bias=False)(d_avg2)
+    d_c3 = layers.Conv2D(50, (5,5), strides=(2,2),padding='same', activation='relu',use_bias=True)(d_avg2)
     d_avg3=layers.AveragePooling2D(strides=(2,2))(d_c3)
     
     # Concat & flatten layers
@@ -133,47 +134,46 @@ def main():
     
     
     #Chain A
-    a_fc1 = layers.Dense(512, activation='relu', use_bias=None)(a_fl)
-    a_fc2 = layers.Dense(62,activation='softmax', use_bias=None)(a_fc1)
+    a_fc1 = layers.Dense(512, activation='relu', use_bias=True)(a_fl)
+    a_fc2 = layers.Dense(62,activation='softmax', use_bias=True)(a_fc1)
     
     #Chain B
-    b_fc1 = layers.Dense(512, activation='relu', use_bias=None)(b_fl)
-    b_fc2 = layers.Dense(62, activation='softmax', use_bias=None)(b_fc1)
+    b_fc1 = layers.Dense(512, activation='relu', use_bias=True)(b_fl)
+    b_fc2 = layers.Dense(62, activation='softmax', use_bias=True)(b_fc1)
     
     #Chain C
-    c_fc1 = layers.Dense(512, activation='relu', use_bias=None)(c_fl)
-    c_fc2 = layers.Dense(62, activation='softmax', use_bias=None)(c_fc1)
+    c_fc1 = layers.Dense(512, activation='relu', use_bias=True)(c_fl)
+    c_fc2 = layers.Dense(62, activation='softmax', use_bias=True)(c_fc1)
     
     #Chain D
-    d_fc1 = layers.Dense(512, activation='relu', use_bias=None)(d_fl)
-    d_fc2 = layers.Dense(62, activation='softmax', use_bias=None)(d_fc1)
+    d_fc1 = layers.Dense(512, activation='relu', use_bias=True)(d_fl)
+    d_fc2 = layers.Dense(62, activation='softmax', use_bias=True)(d_fc1)
     
-    #print "layers created\ncreating model..."
+    
+    
+    
     model = Model(inputs=inputs, outputs=[ a_fc2, b_fc2, c_fc2, d_fc2 ] )
-    #print "model created"
-    
-    #print "compiling..."
     sgd = optimizers.SGD()
     model.compile(sgd, loss='mean_squared_error', metrics=['accuracy'])
-    #print "compiled"
+    
 
     # images and labels for training and validation
-    #print "loading images and labels for training..."
-    trainLabels =  getLabels("./train/")
-    trainImages = getImages("./train/")
-    #print "done"
+   
+    trainLabels =  getLabels("./train_100k")
+    trainImages = getImages("./train_100k/")
+   
     
     # training and validation
-    #print "training..."
-    model.fit(x=trainImages, y=trainLabels, batch_size=1000, epochs=2, validation_split=0.1)
-    #print "done"
+    
+    model.fit(x=trainImages, y=trainLabels, batch_size=128, epochs=2, validation_split=0.1)
+  
     
     # images and labels for testing
     testLabels = getLabels("./test/")
     testImages = getImages("./test/")
     
     # test
-    score=model.evaluate(x=testImages, y=testLabels, batch_size=1000)
+    score=model.evaluate(x=testImages, y=testLabels, batch_size=128)
     
     print(score)
     
