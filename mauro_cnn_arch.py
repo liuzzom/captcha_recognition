@@ -73,18 +73,18 @@ def main():
  
     # images and labels for training and validation
     print("loading images and labels for training...")
-    trainLabels =  getLabels("./train/")
-    trainImages = getImages('./train/')
+    trainLabels =  getLabels("./train_1/")
+    trainImages = getImages('./train_1/')
     print("done")
  
     # training and validation
     print("training...")
-    model.fit(x=trainImages, y=trainLabels, batch_size=32, epochs=2, validation_split=0.1)
+    model.fit(x=trainImages, y=trainLabels, batch_size=32, epochs=10, validation_split=0.1)
     print("done")
  
     # images and labels for testing
-    testLabels = getLabels("./test/")
-    testImages = getImages("./test/")
+    testLabels = getLabels("./test_1/")
+    testImages = getImages("./test_1/")
  
     # test
     score=model.evaluate(x=testImages, y=testLabels, batch_size=32)
