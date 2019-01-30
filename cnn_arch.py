@@ -5,7 +5,6 @@ import cv2 as cv
 from sklearn.preprocessing import MultiLabelBinarizer
 import os
 from numpy import array
-from cv2.cv2 import THRESH_BINARY
 
 def charToInt(char):
     # TO DO: change bad name
@@ -52,7 +51,7 @@ def image_to_scalegray(path_dir,img_name):
     # transform a rgb image to its scalegray representation
     path = path_dir + img_name
     img = cv.imread(path, 0)
-    cv.threshold(img,127,255,cv.THRESH_BINARY)
+    _,img=cv.threshold(img,210,255,cv.THRESH_BINARY)
     img = img.reshape([60, 160, 1])
     return img
     
@@ -163,7 +162,7 @@ def main():
     
     # training and validation
     #print "training..."
-    model.fit(x=trainImages, y=trainLabels, batch_size=1000, epochs=2, validation_split=0.1)
+    model.fit(x=trainImages, y=trainLabels, batch_size=128, epochs=10, validation_split=0.1)
     #print "done"
     
     # images and labels for testing
@@ -171,7 +170,7 @@ def main():
     testImages = getImages("./test/")
     
     # test
-    score=model.evaluate(x=testImages, y=testLabels, batch_size=1000)
+    score=model.evaluate(x=testImages, y=testLabels, batch_size=128)
     
     print(score)
     
