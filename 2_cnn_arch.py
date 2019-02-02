@@ -3,12 +3,13 @@ from tensorflow.keras import layers, Model, optimizers
 import cv2 as cv
 import os
 from numpy import array
+from tensorflow.python.keras.optimizers import SGD
 
  
 def getLabels(dirPath):
     # get all image names
     imgNames = [name for name in os.listdir(dirPath) if name.endswith(".png")]
-    imgNames.sort()
+    #imgNames.sort()
  
     # list containing first letters
     firstLetters = [int(name[0]) for name in imgNames]
@@ -19,8 +20,8 @@ def getLabels(dirPath):
     secondLetters = array(secondLetters)
  
     # conversion in categorical numpy array
-    firstLetters = tf.keras.utils.to_categorical(firstLetters)
-    secondLetters = tf.keras.utils.to_categorical(secondLetters)
+    firstLetters = tf.keras.utils.to_categorical(firstLetters, num_classes=10)
+    secondLetters = tf.keras.utils.to_categorical(secondLetters, num_classes=10)
  
     return [firstLetters,secondLetters]
  
@@ -29,7 +30,7 @@ def getImages(dirPath):
  
     # get all image names
     imgNames = [name for name in os.listdir(dirPath) if name.endswith(".png")]
-    imgNames.sort()
+    #imgNames.sort()
     images = [image_to_scalegray(dirPath, imgName) for imgName in imgNames]
     images = array(images)
     return images
@@ -99,8 +100,9 @@ def main():
     print("model created")
  
     print("compiling...")
-    adam = optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
-    model.compile(adam, loss='mean_squared_error', metrics=['accuracy'])
+    sgd=SGD(lr=0.001,momentum=0.,decay=0.,nesterov=False)
+    #adam = optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False) 
+    model.compile(sgd, loss='mean_squared_error', metrics=['accuracy'])
     print("compiled")
     
     # images and labels for training and validation
@@ -114,12 +116,10 @@ def main():
     validationImages = getImages("./validation_2/")
     print("done")
  
-    print(type(trainLabels))
-    print(type(trainImages))
  
     # training and validation
     print("training...")
-    model.fit(x=trainImages, y=trainLabels, batch_size=32, epochs=20, validation_data=(validationImages, validationLabels))
+    model.fit(x=trainImages, y=trainLabels, batch_size=256, epochs=20,verbose=2, validation_data=(validationImages, validationLabels))
     print("done")
  
     # images and labels for testing
