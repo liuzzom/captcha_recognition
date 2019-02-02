@@ -19,11 +19,11 @@ def main():
 
     if len(sys.argv) == 2:
         samples = int(sys.argv[1])
-        print("generating " + sys.argv[1] + " captcha per char...")
+        print("generating " + sys.argv[1] + " captchas...")
         generate_dataset(samples)
         print("done")
     else:
-        print("Correct use: python3 random_captcha_generator.py [captcha-per-char]")
+        print("Correct use: python3 random_captcha_generator.py [captcha-num]")
 
 if __name__ == "__main__":
     main()

@@ -3,6 +3,7 @@ from tensorflow.keras import layers, Model, optimizers
 import cv2 as cv
 import os
 from numpy import array
+
  
 def getLabels(dirPath):
     # get all image names
@@ -51,46 +52,45 @@ def main():
     print("creating layers...")
  
     # Chain A
-    a_c1 = layers.Conv2D(20, (5,5), strides=(2,2),padding='same', activation='relu', use_bias=True)(inputs)
-    a_mp1 = layers.MaxPooling2D()(a_c1)
-    a_c2 = layers.Conv2D(32, (5,5), strides=(2,2),padding='same', activation='relu',use_bias=True)(a_mp1)
-    a_avg2 = layers.AveragePooling2D()(a_c2)
-    a_c3 = layers.Conv2D(50, (5,5), strides=(2,2),padding='same',  activation='relu',use_bias=True)(a_avg2)
-    a_avg3=layers.AveragePooling2D()(a_c3)
+    a_c1 = layers.Conv2D(20, (5,5), strides=(2,2),padding='same', activation='relu', use_bias=True, name='a_c1')(inputs)
+    a_mp1 = layers.MaxPooling2D(name='a_mp1')(a_c1)
+    a_c2 = layers.Conv2D(32, (5,5), strides=(2,2),padding='same', activation='relu',use_bias=True, name='a_c2')(a_mp1)
+    a_avg2 = layers.AveragePooling2D(name='a_avg2')(a_c2)
+    a_c3 = layers.Conv2D(50, (5,5), strides=(2,2),padding='same',  activation='relu',use_bias=True, name='a_c3')(a_avg2)
+    a_avg3 = layers.AveragePooling2D(name='a_avg3')(a_c3)
  
     
     # Chain B
-    b_c1 = layers.Conv2D(20, (5,5), strides=(2,2), padding='same',activation='relu', use_bias=True)(inputs)
-    b_mp1 = layers.MaxPooling2D(strides=(2,2))(b_c1)
-    b_c2 = layers.Conv2D(32, (5,5), strides=(2,2), padding='same',activation='relu',use_bias=True)(b_mp1)
-    b_avg2 = layers.AveragePooling2D(strides=(2,2))(b_c2)
-    b_c3 = layers.Conv2D(50, (5,5), strides=(2,2),padding='same', activation='relu',use_bias=True)(b_avg2)
-    b_avg3=layers.AveragePooling2D(strides=(2,2))(b_c3)
+    b_c1 = layers.Conv2D(20, (5,5), strides=(2,2), padding='same',activation='relu', use_bias=True, name='b_c1')(inputs)
+    b_mp1 = layers.MaxPooling2D(name='b_mp1')(b_c1)
+    b_c2 = layers.Conv2D(32, (5,5), strides=(2,2), padding='same',activation='relu',use_bias=True, name='b_c2')(b_mp1)
+    b_avg2 = layers.AveragePooling2D(name='b_avg2')(b_c2)
+    b_c3 = layers.Conv2D(50, (5,5), strides=(2,2),padding='same', activation='relu',use_bias=True, name='b_c3')(b_avg2)
+    b_avg3 = layers.AveragePooling2D(name='b_avg3')(b_c3)
     
     #Concat & flatten layers
  
     
     #Chain A
-    a_x=layers.concatenate([a_avg3,b_avg3])
-    
+    a_x=layers.concatenate([a_avg3,b_avg3])    
     b_x=layers.concatenate([a_avg3,b_avg3])
     
     
     #Concat & flatten layers
-    a_fl = layers.Flatten()(a_x)
-    b_fl = layers.Flatten()(b_x)
+    a_fl = layers.Flatten(name='a_fl')(a_x)
+    b_fl = layers.Flatten(name='b_fl')(b_x)
     
    
     
     # Fully connnected layers
  
     #Chain A
-    a_fc1 = layers.Dense(512, activation='relu', use_bias=True)(a_fl)
-    a_fc2 = layers.Dense(10,activation='softmax', use_bias=True)(a_fc1)
+    a_fc1 = layers.Dense(512, activation='relu', use_bias=True, name='a_fc1')(a_fl)
+    a_fc2 = layers.Dense(10,activation='softmax', use_bias=True, name='a_fc2')(a_fc1)
     
     #Chain B
-    b_fc1 = layers.Dense(512, activation='relu', use_bias=True)(b_fl)
-    b_fc2 = layers.Dense(10, activation='softmax', use_bias=True)(b_fc1)
+    b_fc1 = layers.Dense(512, activation='relu', use_bias=True, name='b_fc1')(b_fl)
+    b_fc2 = layers.Dense(10, activation='softmax', use_bias=True, name='b_fc2')(b_fc1)
     
     
  
@@ -99,8 +99,8 @@ def main():
     print("model created")
  
     print("compiling...")
-    sgd = optimizers.SGD()
-    model.compile(sgd, loss='mean_squared_error', metrics=['accuracy'])
+    adam = optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
+    model.compile(adam, loss='mean_squared_error', metrics=['accuracy'])
     print("compiled")
     
     # images and labels for training and validation
@@ -108,13 +108,18 @@ def main():
     trainLabels =  getLabels("./train_2/")
     trainImages = getImages('./train_2/')
     print("done")
+    
+    print("loading images and labels for validation...")
+    validationLabels = getLabels("./validation_2/")
+    validationImages = getImages("./validation_2/")
+    print("done")
  
     print(type(trainLabels))
     print(type(trainImages))
  
     # training and validation
     print("training...")
-    model.fit(x=trainImages, y=trainLabels, batch_size=256, epochs=5, validation_split=0.1)
+    model.fit(x=trainImages, y=trainLabels, batch_size=32, epochs=20, validation_data=(validationImages, validationLabels))
     print("done")
  
     # images and labels for testing
@@ -124,6 +129,7 @@ def main():
     # test
     score=model.evaluate(x=testImages, y=testLabels, batch_size=256)
  
+    print(model.metrics_names)
     print(score)
     
  
